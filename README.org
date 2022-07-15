@@ -1,0 +1,17 @@
+* Layoup 
+
+** Usage
+
+** Installation
+
+** Author
+
++ semi (semilin@disroot.org)
+
+** Copyright
+
+Copyright (c) 2022 semi (semilin@disroot.org)
+
+** License
+
+Licensed under the GPLv3 License.
