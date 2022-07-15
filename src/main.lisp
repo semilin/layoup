@@ -45,6 +45,8 @@
    :pos-to-key
    :analyze-keys
    :key-matrix
-   :add-file-to-corpus)
+   :swap-keys
+   :add-file-to-corpus
+   :keys-total)
   (:local-nicknames (:alex :alexandria)))
 (in-package :layoup)

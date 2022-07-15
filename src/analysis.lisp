@@ -69,16 +69,14 @@
 	    (push result results))))
     results))
 
-(defun ngraph-to-ngram (k ngraph)
-  (mapcar (lambda (pos) (nth (pos-col pos)
-			(nth (pos-row pos) k)))
-	  ngraph))
+(defun ngraph-to-ngram (ngraph k)
+  (mapcar (lambda (pos) (pos-to-key pos k)) ngraph))
 
 (defun analyze-keys (corpus k metric-results)
   (let ((results (make-hash-table)))
     (loop for rlist in metric-results do
       (loop for result in rlist do
-	(let* ((frequency (gethash (ngraph-to-ngram k (metric-result-positions result))
+	(let* ((frequency (gethash (ngraph-to-ngram (metric-result-positions result) k)
 				   (corpus-bigrams corpus)))
 	       (frequency (if (null frequency) 0 frequency)))
 	  (if (null (gethash (metric-result-metric result) results))
