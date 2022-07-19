@@ -12,11 +12,15 @@
   (let ((l (mapcar (lambda (row) (coerce row 'list)) row-list)))
     (make-array (list (length l)
 		      (length (first l)))
-		:initial-contents l)))
+		:initial-contents l
+		:element-type 'character)))
 
 (defun pos-to-key (pos keys)
   "Returns the key at POS on KEYS."
-  (declare (type pos pos))
+  (declare (type pos pos)
+	   (type (simple-array character *) keys)
+	   (inline)
+	   (optimize (speed 3) (safety 1)))
   (aref keys
 	(pos-row pos)
 	(pos-col pos)))

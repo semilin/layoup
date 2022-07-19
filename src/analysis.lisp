@@ -70,6 +70,11 @@
     results))
 
 (defun ngraph-to-ngram (ngraph k)
+  (declare (optimize (speed 3)
+		     (safety 1))
+	   (type (or list character) ngraph)
+	   (type (array) k)
+	   (inline))
   (mapcar (lambda (pos) (pos-to-key pos k)) ngraph))
 
 (defun analyze-keys (corpus k metric-results)
@@ -77,7 +82,7 @@
 	   (type array k)
 	   (type list metric-results))
   (declare (optimize (speed 3) (safety 0)))
-  (let ((results (make-hash-table)))
+  (let ((results (make-hash-table :size 20)))
     (loop for rlist in metric-results do
       (loop for result in rlist do
 	(let ((frequency (gethash (ngraph-to-ngram (metric-result-positions result) k)
