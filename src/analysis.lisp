@@ -84,5 +84,7 @@
 				  (corpus-bigrams corpus) 0))
 	      (metric-r (metric-result-metric result)))
 	  (declare (type fixnum frequency))
+	  ;; TODO figure out how to improve performance here (declare
+	  ;; hash result to be fixnum)
 	  (incf (gethash metric-r results 0) frequency))))
     results))
