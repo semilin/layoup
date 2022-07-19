@@ -73,13 +73,16 @@
   (mapcar (lambda (pos) (pos-to-key pos k)) ngraph))
 
 (defun analyze-keys (corpus k metric-results)
+  (declare (type corpus corpus)
+	   (type array k)
+	   (type list metric-results))
+  (declare (optimize (speed 3) (safety 0)))
   (let ((results (make-hash-table)))
     (loop for rlist in metric-results do
       (loop for result in rlist do
-	(let* ((frequency (gethash (ngraph-to-ngram (metric-result-positions result) k)
-				   (corpus-bigrams corpus)))
-	       (frequency (if (null frequency) 0 frequency)))
-	  (if (null (gethash (metric-result-metric result) results))
-	      (setf (gethash (metric-result-metric result) results) frequency)
-	      (incf (gethash (metric-result-metric result) results) frequency)))))
+	(let ((frequency (gethash (ngraph-to-ngram (metric-result-positions result) k)
+				  (corpus-bigrams corpus) 0))
+	      (metric-r (metric-result-metric result)))
+	  (declare (type fixnum frequency))
+	  (incf (gethash metric-r results 0) frequency))))
     results))
