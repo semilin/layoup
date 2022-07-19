@@ -11,7 +11,7 @@
 		 (:file "layout")
 		 (:file "analysis")
 		 (:file "metrics"))))
-  :description ""
+  :description "Declarative keyboard layout analyzer"
   :in-order-to ((asdf:test-op (test-op "layoup/tests"))))
 
 (asdf:defsystem "layoup/tests"
@@ -25,3 +25,12 @@
   :description "Test system for layoup"
   :perform (asdf:test-op (op c) (symbol-call :rove :run c)))
 
+(asdf:defsystem "layoup/cli"
+  :version "0.1.0"
+  :author "semi"
+  :license "GPLv3"
+  :depends-on ("layoup")
+  :components ((:module "cli"
+		:components
+		((:file "main"))))
+  :description "CLI for layoup")
