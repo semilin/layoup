@@ -1,3 +1,7 @@
+#+sb-core-compression
+(defmethod asdf:perform ((o asdf:image-op) (c asdf:system))
+  (uiop:dump-image (asdf:output-file o c) :executable t :compression t))
+
 (asdf:defsystem "layoup"
   :version "0.1.0"
   :author "semi"
@@ -9,8 +13,7 @@
 		 (:file "pos")
 		 (:file "corpus")
 		 (:file "layout")
-		 (:file "analysis")
-		 (:file "metrics"))))
+		 (:file "analysis"))))
   :description "Declarative keyboard layout analyzer"
   :in-order-to ((asdf:test-op (test-op "layoup/tests"))))
 
@@ -29,8 +32,12 @@
   :version "0.1.0"
   :author "semi"
   :license "GPLv3"
-  :depends-on ("layoup")
-  :components ((:module "cli"
+  :depends-on ("layoup"
+	       "alexandria")
+  :build-operation "program-op"
+  :build-pathname "layoup"
+  :entry-point "layoup/cli:main"
+  :components ((:module "cli-src"
 		:components
 		((:file "main"))))
   :description "CLI for layoup")

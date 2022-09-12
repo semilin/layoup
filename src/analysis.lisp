@@ -1,55 +1,40 @@
 (in-package :layoup)
 
 (defstruct metric
-  name
-  fn)
+  (name "" :type string)
+  (fn nil :type function)
+  ngram)
 
 (defstruct metric-result
-  metric
-  positions
+  (positions nil :type list)
   result)
+
+(defstruct metric-result-list
+  table)
 
 (defstruct metric-list
   bigraphs
   trigraphs)
 
-(defun new-metric (name fn)
+(defun new-metric (name fn ngram)
   (declare (type string name)
 	   (type function fn))
-  (make-metric :name name :fn fn))
+  (make-metric :name name :fn fn :ngram ngram))
 
-(defun classify-bigraph (metric-list a b)
-  (declare (type metric-list metric-list)
-	   (type pos a b))
-  (let ((results nil))
-    (loop for metric in (metric-list-bigraphs metric-list) do
-      (let ((result (funcall (metric-fn metric) a b)))
-	(if (not (zerop result))
-	    (push (make-metric-result :metric metric
-				      :positions (list a b)
-				      :result result)
-		  results))))
-    results))
-
-(defun classify-trigraph (metric-list a b c)
-  (declare (type metric-list metric-list)
-	   (type pos a b c))
-  (let ((results nil))
-    (loop for metric in (metric-list-trigraphs metric-list) do
-      (let ((result (funcall (metric-fn metric) a b c)))
-	(if (not (zerop result))
-	    (push (make-metric-result :metric metric
-				      :positions (list a b c)
-				      :result result)
-		  results))))
-    results))
+(defun classify-ngram (metric positions)
+  (declare (type metric metric))
+  (let ((result (apply (metric-fn metric) positions)))
+    (if result
+	(make-metric-result :positions positions :result result))))
 
 (defun calculate-metrics (pos-fn metric-list)
   (declare (type function pos-fn)
 	   (type metric-list metric-list))
-  (let ((positions nil)
-	(combinations nil)
-	(results nil))    
+  (let* ((positions nil)
+	 (tricombinations nil)
+	 (combinations nil)
+	 (results (make-metric-result-list :table (make-hash-table :test 'eq)))
+	 (table (metric-result-list-table results))) 
     ;; create basic positions list
     (loop for row from 0 to 2 do
       (loop for col from 0 to 9 do
@@ -58,20 +43,25 @@
     ;; create combinations
     (loop for a in positions do
       (loop for b in positions do
-	(push (list a b) combinations)))
+	(push (list a b) combinations)
+	(loop for c in positions do
+	  (push (list a b c) tricombinations))))
 
     ;; calculate metrics
     (loop for comb in combinations do
-      (let* ((a (first comb))
-	     (b (second comb))
-	     (result (classify-bigraph metric-list a b)))
-	(if (not (null result))
-	    (push result results))))
+      (loop for metric in (metric-list-bigraphs metric-list)
+	    do (let ((result (classify-ngram metric comb)))
+		 (if result (push result (gethash metric table))))))
+
+    (loop for comb in tricombinations do
+      (loop for metric in (metric-list-trigraphs metric-list)
+	    do (let ((result (classify-ngram metric comb)))
+		 (if result (push result (gethash metric table))))))
     results))
 
 (defun ngraph-to-ngram (ngraph k)
   (declare (optimize (speed 3)
-		     (safety 1))
+		     (safety 0))
 	   (type (or list character) ngraph)
 	   (type (array) k)
 	   (inline))
@@ -80,16 +70,35 @@
 (defun analyze-keys (corpus k metric-results)
   (declare (type corpus corpus)
 	   (type array k)
-	   (type list metric-results))
+	   (type metric-result-list metric-results))
   (declare (optimize (speed 3) (safety 0)))
-  (let ((results (make-hash-table :size 20)))
-    (loop for rlist in metric-results do
-      (loop for result in rlist do
-	(let ((frequency (gethash (ngraph-to-ngram (metric-result-positions result) k)
-				  (corpus-bigrams corpus) 0))
-	      (metric-r (metric-result-metric result)))
-	  (declare (type fixnum frequency))
-	  ;; TODO figure out how to improve performance here (declare
-	  ;; hash result to be fixnum)
-	  (incf (gethash metric-r results 0) frequency))))
+  (let* ((table (metric-result-list-table metric-results))
+	 (results (make-hash-table :size (hash-table-size table))))
+    (loop for metric being the hash-keys of table
+	    using (hash-value values) do
+	      (let ((corpus-ngrams (ecase (metric-ngram metric)
+				     (:bigram (corpus-bigrams corpus))
+				     (:skipgram (corpus-skipgrams corpus))
+				     (:trigram (corpus-trigrams corpus)))))
+		(loop for value in values
+		      do (let ((frequency (gethash (ngraph-to-ngram (metric-result-positions value) k) corpus-ngrams 0)))
+			   (declare (type fixnum frequency))
+			   (incf (gethash metric results 0) frequency)))))
     results))
+
+(defun layout-metric-ngrams (corpus k metric-results metric)
+  (declare (type corpus corpus)
+	   (type array k)
+	   (type metric-result-list metric-results)
+	   (type metric metric))
+  (sort (loop for value in (gethash metric (metric-result-list-table metric-results))
+	      collect (let ((ngram (ngraph-to-ngram (metric-result-positions value) k))
+			    (corpus-ngrams (ecase (metric-ngram metric)
+					     (:bigram (corpus-bigrams corpus))
+					     (:skipgram (corpus-skipgrams corpus))
+					     (:trigram (corpus-trigrams corpus)))))
+			(list ngram
+			      (* (gethash ngram corpus-ngrams 0)
+				 (metric-result-result value)))))
+	(lambda (a b) (> (second a)
+		    (second b)))))

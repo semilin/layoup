@@ -1,10 +1,10 @@
 (in-package :layoup)
 
 (defstruct layout
-  name
-  author
-  link
-  year
+  (name "" :type string)
+  (author "" :type string)
+  (link "" :type string)
+  (year 0 :type fixnum)
   formats)
 
 (defun key-matrix (row-list)
