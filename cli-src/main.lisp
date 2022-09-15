@@ -22,18 +22,20 @@
 		:inward)))))
 
   (defun horizontal-distance (a b)
-    (abs (- (pos-x a)
-	    (pos-x b))))
+    (coerce (abs (- (pos-x a)
+		    (pos-x b)))
+	    'float))
 
   (defun vertical-distance (a b)
-    (abs (- (pos-y a)
-	    (pos-y b))))
+    (coerce (abs (- (pos-y a)
+		    (pos-y b)))
+	    'float))
 
   (defun distance (a b)
-    (sqrt (+ (expt (horizontal-distance a b)
-		   2)
-	     (expt (vertical-distance a b)
-		   2))))
+    (the float (sqrt (+ (expt (horizontal-distance a b)
+			      2)
+			(expt (vertical-distance a b)
+			      2)))))
 
   (defun same-finger (a b)
     (eq (pos-finger a) (pos-finger b)))
@@ -46,7 +48,7 @@
 	  (y (finger-finger (pos-finger b))))
       (and (same-hand a b)
 	   (/= x y)
-	   (= 0 (abs (- x y))))))
+	   (= 1 (abs (- x y))))))
   
   (defun sfr? (a b)
     "same-finger repeat - same key being pressed twice in sequence"
@@ -91,32 +93,32 @@
   (defvar *metrics* (make-metric-list
 		     :bigraphs (list 
 				(make-metric :name "sfb"
-					     :fn (lambda (a b) (if (sfb? a b) 1 nil))
+					     :fn (lambda (a b) (if (sfb? a b) 1.0 nil))
 					     :ngram :bigram)
 				(make-metric :name "sfb-distance"
 					     :fn #'sfb-distance
 					     :ngram :bigram)
 				(make-metric :name "sfs"
-					     :fn (lambda (a b) (if (sfb? a b) 1 nil))
+					     :fn (lambda (a b) (if (sfb? a b) 1.0 nil))
 					     :ngram :skipgram)
 				(make-metric :name "sfs-distance"
 					     :fn #'sfb-distance
 					     :ngram :skipgram)
 				(make-metric :name "lsb"
-					     :fn (lambda (a b) (if (lsb? a b) 1 nil))
+					     :fn (lambda (a b) (if (lsb? a b) 1.0 nil))
 					     :ngram :bigram)
 				(make-metric :name "lsb-distance"
 					     :fn #'lsb-distance
 					     :ngram :bigram))
 		     :trigraphs (list
 				 (make-metric :name "alternation"
-					      :fn (lambda (a b c) (if (alternate? a b c) 1 nil))
+					      :fn (lambda (a b c) (if (alternate? a b c) 1.0 nil))
 					      :ngram :trigram)
 				 (make-metric :name "rolls"
-					      :fn (lambda (a b c) (if (roll? a b c) 1 nil))
+					      :fn (lambda (a b c) (if (roll? a b c) 1.0 nil))
 					      :ngram :trigram)
 				 (make-metric :name "redirects"
-					      :fn (lambda (a b c) (if (redirect? a b c) 1 nil))
+					      :fn (lambda (a b c) (if (redirect? a b c) 1.0 nil))
 					      :ngram :trigram))))
 
   (let ((metric-results (layoup:calculate-metrics #'layoup:ansi-pos *metrics*))
@@ -125,9 +127,19 @@
 					  "srntkcdeai"
 					  "xjbmqpg,./"))))
     (time (layoup:add-file-to-corpus #P"/home/semi/dl/books.txt" gutenberg))
-    (time (loop for i from 0 to 1000 do
+    (time (loop repeat 1000 do
       (layoup:analyze-keys gutenberg semimak metric-results)))
+    
+    ;; (tracer:with-tracing ("LAYOUP" ecase gethash incf) (loop repeat 3 do
+    ;;   (layoup:analyze-keys gutenberg semimak metric-results)))
+    ;; (tracer:save-report "report.json")
+    
+    ;; (let ((threads nil))
+    ;;   (time (loop repeat 100 do
+    ;; 	(push (bt:make-thread (lambda () (loop repeat 1000
+    ;; 					  do (layoup:analyze-keys gutenberg semimak metric-results)))) threads)))
+    ;;   (time (mapcar #'bt:join-thread threads)))
     (let ((results (layoup:analyze-keys gutenberg semimak metric-results)))
-      (format T "~a" (layoup::layout-metric-ngrams gutenberg semimak metric-results (second (metric-list-bigraphs *metrics*))))
+      (format T "~a~%" (layoup::layout-metric-ngrams gutenberg semimak metric-results (fourth (metric-list-bigraphs *metrics*))))
       (loop for k being the hash-keys in results using (hash-value v) do
 	(format T "~a: ~f%~%" (layoup:metric-name k) (* 100 (/ v (layoup:keys-total semimak gutenberg))))))))

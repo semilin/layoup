@@ -7,4 +7,6 @@
 *.x86f
 *~
 .#*
-/src/report.json
+*report.json
+report.json
+layoup

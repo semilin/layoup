@@ -20,7 +20,7 @@
   (declare (type pos pos)
 	   (type (simple-array character *) keys)
 	   (inline)
-	   (optimize (speed 3) (safety 1)))
+	   (optimize (speed 3) (safety 0)))
   (aref keys
 	(pos-row pos)
 	(pos-col pos)))

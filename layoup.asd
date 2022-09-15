@@ -33,7 +33,8 @@
   :author "semi"
   :license "GPLv3"
   :depends-on ("layoup"
-	       "alexandria")
+	       "bordeaux-threads"
+	       "tracer")
   :build-operation "program-op"
   :build-pathname "layoup"
   :entry-point "layoup/cli:main"

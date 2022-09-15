@@ -7,7 +7,7 @@
 
 (defstruct metric-result
   (positions nil :type list)
-  result)
+  (result 0.0 :type single-float))
 
 (defstruct metric-result-list
   table)
@@ -71,7 +71,7 @@
   (declare (type corpus corpus)
 	   (type array k)
 	   (type metric-result-list metric-results))
-  (declare (optimize (speed 3) (safety 0)))
+  (declare (optimize (speed 3) (safety 3)))
   (let* ((table (metric-result-list-table metric-results))
 	 (results (make-hash-table :size (hash-table-size table))))
     (loop for metric being the hash-keys of table
@@ -81,9 +81,10 @@
 				     (:skipgram (corpus-skipgrams corpus))
 				     (:trigram (corpus-trigrams corpus)))))
 		(loop for value in values
-		      do (let ((frequency (gethash (ngraph-to-ngram (metric-result-positions value) k) corpus-ngrams 0)))
+		      do (let ((frequency (gethash (ngraph-to-ngram (metric-result-positions value) k) corpus-ngrams 0))
+			       (metric-amount (metric-result-result value)))
 			   (declare (type fixnum frequency))
-			   (incf (gethash metric results 0) frequency)))))
+			   (incf (the single-float (gethash metric results 0.0)) (the single-float (* metric-amount frequency)))))))
     results))
 
 (defun layout-metric-ngrams (corpus k metric-results metric)
@@ -98,7 +99,7 @@
 					     (:skipgram (corpus-skipgrams corpus))
 					     (:trigram (corpus-trigrams corpus)))))
 			(list ngram
-			      (* (gethash ngram corpus-ngrams 0)
+			      (* (gethash ngram corpus-ngrams 0.0)
 				 (metric-result-result value)))))
 	(lambda (a b) (> (second a)
 		    (second b)))))
