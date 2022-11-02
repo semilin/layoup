@@ -30,8 +30,16 @@
 			      *layouts*)
 		     l)))))
 
-(defun analyze-layout (layout corpus &optional keyboard)
-  ())
+(defun analyze (layout)
+  (let* ((metric-results (layoup:calculate-metrics (defaults-keyboard *defaults*)
+						   *metrics*))
+	 (results (layoup:analyze-keys (defaults-corpus *defaults*)
+				       (layout-matrix layout)
+				       metric-results)))    
+    (loop for k being the hash-keys in results using (hash-value v) do
+      (format T "~a: ~1,2f%~%" (cyan (layoup:metric-name k))
+	      (* 100
+		 (/ v (layoup:keys-total (layout-matrix layout) (defaults-corpus *defaults*))))))))
 
 (defun load-defaults ()
   (setf *defaults* (if (probe-file "./data/defaults.out")
@@ -102,7 +110,13 @@
   (arguments () :type list)
   function)
 
-(defvar *commands* (list (make-command :name "add-corpus"
+(defvar *commands* (list (make-command :name "analyze"
+				       :aliases '("a" "stats")
+				       :description "Prints the metric statistics for a layout."
+				       :arguments (list (make-argument :name "layout"
+								       :type :layout))
+				       :function #'analyze)
+			 (make-command :name "add-corpus"
 				       :aliases '("ac")
 				       :description "Loads a corpus from a text file and adds it to the list of corpora."
 				       :arguments (list (make-argument :name "path"
@@ -170,8 +184,8 @@
 		   corpus
 		   (error 'argument-error :message (format t "Corpus ~a does not exist.~%" (yellow user-arg))))))
     (:keyboard (alexandria:switch (user-arg :test #'equal)
-		 ("matrix" #'matrix-pos)
-		 ("ansi" #'ansi-pos)
+		 ("matrix" #'layoup:matrix-pos)
+		 ("ansi" #'layoup:ansi-pos)
 		 (otherwise (error 'argument-error :message (format t "Keyboard ~a does not exist.~%" (yellow user-arg))))))))
 
 (defun parse-command (command args)
@@ -206,14 +220,4 @@
 	       (finish-output)
 	       (let ((args (str:words (read-line))))
 		 (if args (handler-case (get-command args)
-			    (user-error (e) (format t "~a: ~a~%" (red "error") e))))))))
-  
-  
-  (let ((metric-results (layoup:calculate-metrics #'layoup:ansi-pos *metrics*))
-	(gutenberg (gethash "gutenberg" *corpora*))
-	(colemak (layout-matrix (gethash "colemak" *layouts*))))
-    
-    (let ((results (layoup:analyze-keys gutenberg colemak metric-results)))
-      (format T "~a~%" (layoup::layout-metric-ngrams gutenberg colemak metric-results (fourth (metric-list-bigraphs *metrics*))))
-      (loop for k being the hash-keys in results using (hash-value v) do
-	(format T "~a: ~f%~%" (layoup:metric-name k) (* 100 (/ v (layoup:keys-total colemak gutenberg))))))))
+			    (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
