@@ -151,7 +151,7 @@
 								       :type :corpus))
 				       :function #'default-corpus)
 			 (make-command :name "help"
-				       :aliases '("hwat")
+				       :aliases '("hwat" "?")
 				       :description "Prints a help message and list of commands."
 				       :arguments nil
 				       :function #'help)
