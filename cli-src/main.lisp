@@ -53,6 +53,9 @@
 (defun default-keyboard (keyboard)
   (setf (defaults-keyboard *defaults*) keyboard))
 
+(defun default-corpus (corpus)
+  (setf (defaults-corpus *defaults*) corpus))
+
 (defun load-corpora ()
   (setf *corpora* (cl-store:restore "./data/corpora.out")))
 
@@ -141,6 +144,12 @@
 				       :arguments (list (make-argument :name "keyboard"
 								       :type :keyboard))
 				       :function #'default-keyboard)
+			 (make-command :name "default-corpus"
+				       :aliases '("dc")
+				       :description "Sets the default corpus."
+				       :arguments (list (make-argument :name "corpus"
+								       :type :corpus))
+				       :function #'default-corpus)
 			 (make-command :name "help"
 				       :aliases '("hwat")
 				       :description "Prints a help message and list of commands."
