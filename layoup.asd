@@ -36,7 +36,10 @@
 	       "alexandria"
 	       "cl-store"
 	       "bordeaux-threads"
-	       "arrows")
+	       "arrows"
+	       "with-user-abort"
+	       "str"
+	       "cl-ansi-text")
   :build-operation "program-op"
   :build-pathname "layoup"
   :entry-point "layoup/cli:main"

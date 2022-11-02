@@ -11,4 +11,7 @@
 	(list :alexandria
 	      :cl-store
 	      :bordeaux-threads
-	      :arrows))
+	      :arrows
+	      :with-user-abort
+	      :str
+	      :cl-ansi-text))
