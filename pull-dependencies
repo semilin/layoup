@@ -1,0 +1,14 @@
+#!/bin/env -S sbcl --script
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+                                       (user-homedir-pathname))))
+  (when (probe-file quicklisp-init)
+    (load quicklisp-init)))
+
+#-quicklisp (progn (format T "Quicklisp is not installed. Please install it: https://www.quicklisp.org/beta/~%")
+		   (quit))
+
+(mapcar (lambda (p) (ql:quickload p))
+	(list :alexandria
+	      :cl-store
+	      :bordeaux-threads
+	      :arrows))
