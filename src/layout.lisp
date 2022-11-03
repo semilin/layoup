@@ -2,12 +2,10 @@
 
 (defstruct layout
   (name "" :type string)
-  (author "" :type string)
-  (link "" :type string)
-  (year 0 :type fixnum)
-  formats)
+  matrix
+  keyboard)
 
-(defun key-matrix (row-list)
+(defun key-matrix (&rest row-list)
   "Converts a list of rows into a 2d key array. Each row is a string with no spaces, e.g. \"asdfghjkl;\" "
   (let ((l (mapcar (lambda (row) (coerce row 'list)) row-list)))
     (make-array (list (length l)

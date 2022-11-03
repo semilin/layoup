@@ -18,6 +18,10 @@
    :corpus-bigrams
    :corpus-trigrams
    :corpus-skipgrams
+   :make-layout
+   :layout-name
+   :layout-matrix
+   :layout-keyboard
    :calculate-metrics
    :metric
    :make-metric

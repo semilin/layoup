@@ -13,10 +13,9 @@
 (deftest test-target-2
     (testing "function keys outputs correct matrix"
 	     (ok ((equal
-		   (layoup:key-matrix
-		    (list "qwertyuiop"
-			  "asdfghjkl;"
-			  "zxcvbnm,./"))
+		   (layoup:key-matrix "qwertyuiop"
+				      "asdfghjkl;"
+				      "zxcvbnm,./")
 		   '((#\q #\w #\e #\r #\t #\y #\u #\i #\o #\p)
 		     (#\a #\s #\d #\f #\g #\h #\j #\k #\l #\;)
-		     (#\z #\x #\c #\v #\b #\n #\m #\, #\. #\/))))
+		     (#\z #\x #\c #\v #\b #\n #\m #\, #\. #\/)))))))

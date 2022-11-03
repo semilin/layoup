@@ -33,7 +33,10 @@
   :author "semi"
   :license "GPLv3"
   :depends-on ("layoup"
+	       "alexandria"
+	       "cl-store"
 	       "bordeaux-threads"
+	       "arrows"
 	       "tracer")
   :build-operation "program-op"
   :build-pathname "layoup"

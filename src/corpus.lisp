@@ -24,7 +24,8 @@
 (defun add-to-corpus (text corpus)
   "Adds the data from text to corpus."
   (declare (type string text)
-	   (type corpus corpus))
+	   (type corpus corpus)
+	   (optimize (speed 3)))
   (loop for (a b c) on (coerce text 'list) do
     (if a
 	(let ((a (char-downcase a)))
@@ -41,10 +42,10 @@
 (defun add-file-to-corpus (path corpus)
   "Reads a text file and adds its data to corpus."
   (declare (type pathname path)
-	   (type corpus corpus))
+	   (type corpus corpus)
+	   (optimize (speed 3)))
   (with-open-file (file path)
-    (loop for i from 0
-	  for line = (read-line file nil nil)
+    (loop for line = (read-line file nil nil)
 	  while line
 	  do (add-to-corpus line corpus)))
   corpus)
