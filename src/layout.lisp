@@ -18,7 +18,7 @@
   (declare (type pos pos)
 	   (type (simple-array character *) keys)
 	   (inline)
-	   (optimize (speed 3) (safety 0)))
+	   (optimize (speed 3) (safety 1)))
   (aref keys
 	(pos-row pos)
 	(pos-col pos)))
@@ -34,7 +34,12 @@ CORPUS. Used for calculating metric percentages."
 
 (defun swap-keys (a b keys)
   "Destructively modifies original KEYS by swapping A and B."
-  (declare (type pos a b))
-  (rotatef (pos-to-key a keys)
-	   (pos-to-key b keys))
+  (declare (type pos a b)
+	   (type (simple-array character *) keys))
+  (rotatef (aref keys
+		 (pos-row a)
+		 (pos-col a))
+	   (aref keys
+		 (pos-row b)
+		 (pos-col b)))
   keys)
