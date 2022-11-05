@@ -45,5 +45,7 @@
   :entry-point "layoup/cli:main"
   :components ((:module "cli-src"
 		:components
-		((:file "main"))))
+		((:file "main")
+		 (:file "layouts")
+		 (:file "commands"))))
   :description "CLI for layoup")
