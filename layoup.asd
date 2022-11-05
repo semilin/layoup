@@ -47,6 +47,7 @@
 		:components
 		((:file "main")
 		 (:file "analyze")
+		 (:file "generate")
 		 (:file "layouts")
 		 (:file "commands"))))
   :description "CLI for layoup")
