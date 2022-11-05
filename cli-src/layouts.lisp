@@ -1,5 +1,16 @@
 (in-package :layoup/cli)
 
+(defun print-matrix (matrix)
+  (let* ((dim (array-dimensions matrix))
+	 (n (first dim))
+	 (m (second dim)))
+    (loop for y below n
+	  do (progn
+	       (loop for x below m
+		     when (= x 5)
+		       do (format t " ")		     
+		     do (format t "~a " (aref matrix y x)))
+	       (format t "~%")))))
 
 (defun convert-row (row)
   (-<>> row

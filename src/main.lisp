@@ -19,6 +19,7 @@
    :corpus-trigrams
    :corpus-skipgrams
    :layout
+   :layout-p
    :make-layout
    :layout-name
    :layout-matrix

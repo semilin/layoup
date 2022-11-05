@@ -29,8 +29,7 @@
 				     string-downcase
 				     (substitute #\_ #\SPACE))
 				*layouts*)
-		       l))
-	       ))))
+		       l))))))
 
 (defun load-defaults ()
   (setf *defaults* (if (probe-file "./data/defaults.out")
@@ -157,7 +156,20 @@
 		   (car tg)
 		   (if bg
 		       (car bg)
-		       (error 'argument-error :message (format t "Metric ~a does not exist.~%" (yellow user-arg)))))))))
+		       (error 'argument-error :message (format t "Metric ~a does not exist.~%" (yellow user-arg)))))))
+    (:comparator (alexandria:switch (user-arg :test #'equal)
+		   ("less" #'<=)
+		   ("more" #'>=)
+		   (otherwise (error 'argument-error :message (format t "~a is not a valid comparator. Valid options are (~a, ~a).~%"
+								      (yellow user-arg)
+								      (cyan "less")
+								      (cyan "more"))))))
+    (:number (with-input-from-string (in user-arg)
+	       (let ((v (read in)))
+		 (if (numberp v)
+		     v
+		     (error 'argument-error :message (format t "~a is not a number."
+							     (yellow user-arg)))))))))
 
 (defun parse-command (command args)
   (if (not (command-arguments command))

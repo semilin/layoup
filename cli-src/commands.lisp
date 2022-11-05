@@ -28,6 +28,20 @@
 				  (make-argument :name "metric"
 						 :type :metric))
 		 :function #'list-ngrams)
+   (make-command :name "constrained-anneal"
+		 :aliases '("ca")
+		 :description "Generates a layout with an optimized metric and a constrained metric."
+		 :arguments (list (make-argument :name "optimized-comparator"
+						 :type :comparator)
+				  (make-argument :name "optimized-metric"
+						 :type :metric)
+				  (make-argument :name "constrained-comparator"
+						 :type :comparator)
+				  (make-argument :name "constrained-metric"
+						 :type :metric)
+				  (make-argument :name "constraint-percentage"
+						 :type :number))
+		 :function #'constraint-anneal)
    (make-command :name "add-corpus"
 		 :aliases '("ac")
 		 :description "Loads a corpus from a text file and adds it to the list of corpora."

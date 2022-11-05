@@ -1,9 +1,12 @@
 (in-package :layoup/cli)
 
 (defun stat-percentage (value layout)
-  (* 100
-     (/ value (layoup:keys-total (layout-matrix layout)
-				 (defaults-corpus *defaults*)))))
+  (let ((keys (if (layout-p layout)
+		  (layout-matrix layout)
+		  layout)))
+    (* 100
+       (/ value (layoup:keys-total keys
+				   (defaults-corpus *defaults*))))))
 
 (defun format-percentage (percentage)
   (format nil "~,2f%"
