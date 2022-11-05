@@ -95,7 +95,7 @@
   `(handler-case (with-user-abort:with-user-abort (progn ,@body))
      (with-user-abort:user-abort ()
        (prepare-quit)
-       (sb-ext:exit :code 130))))
+       (uiop:quit))))
 
 (define-condition user-error (error) ())
 
@@ -159,7 +159,7 @@
 				       :aliases '("exit" "q")
 				       :description "Quits the program."
 				       :arguments nil
-				       :function (lambda () (prepare-quit) (sb-ext:exit :code 0)))))
+				       :function (lambda () (prepare-quit) (uiop:quit)))))
 (defun command-usage (command)
   (format nil "~a ~a"
 	  (command-name command)
@@ -222,11 +222,11 @@
   (load-corpora)
   (load-defaults)
 
-  (sb-ext:disable-debugger)
+  #+sb-ext (sb-ext:disable-debugger)
   (exit-on-ctrl-c
-    (loop do (progn
-	       (format t "> ")
-	       (finish-output)
-	       (let ((args (str:words (read-line))))
-		 (if args (handler-case (get-command args)
-			    (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
+   (loop do (progn
+	      (format t "> ")
+	      (finish-output)
+	      (let ((args (str:words (read-line))))
+		(if args (handler-case (get-command args)
+			   (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
