@@ -20,15 +20,17 @@
       (setf *metrics* (eval (read in))))))
 
 (defun load-layouts ()
-  (with-open-file (in #P"./data/layouts.lisp")
-    (with-standard-io-syntax
-      (loop for l in (eval (read in))
-	    do (setf (gethash (->> l
-				   layout-name
-				   string-downcase
-				   (substitute #\_ #\SPACE))
-			      *layouts*)
-		     l)))))
+  (loop for f in (uiop:directory-files "./data/layouts/")
+	do (with-open-file (in f)
+	     (with-standard-io-syntax
+	       (let ((l (eval (read in))))
+		 (setf (gethash (->> l
+				     layout-name
+				     string-downcase
+				     (substitute #\_ #\SPACE))
+				*layouts*)
+		       l))
+	       ))))
 
 (defun analyze (layout)
   (let* ((metric-results (layoup:calculate-metrics (defaults-keyboard *defaults*)
