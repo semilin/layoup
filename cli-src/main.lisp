@@ -57,6 +57,12 @@
 	     (format t "~t- ~a~%" name))
 	   *corpora*))
 
+(defun list-metrics ()
+  (format t "metrics:~%")
+  (mapcar (lambda (m) (format t "~t- ~a~%" (metric-name m)))
+	  (append (metric-list-bigraphs *metrics*)
+		  (metric-list-trigraphs *metrics*))))
+
 (defun save-corpora ()
   (cl-store:store *corpora* "./data/corpora.out"))
 
@@ -69,6 +75,7 @@
   (maphash (lambda (key c) (if (eq corpus c)
 			  (remhash key *corpora* )))
 	   *corpora*))
+
 
 (defun help ()
   (format t "layoup is used by typing commands into the prompt.~%list of commands:~%")

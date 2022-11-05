@@ -18,6 +18,7 @@
    :corpus-bigrams
    :corpus-trigrams
    :corpus-skipgrams
+   :layout
    :make-layout
    :layout-name
    :layout-matrix
@@ -48,6 +49,7 @@
    :matrix-pos
    :pos-to-key
    :analyze-keys
+   :layout-metric-ngrams
    :key-matrix
    :swap-keys
    :add-file-to-corpus

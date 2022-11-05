@@ -20,6 +20,14 @@
 		 :arguments (list (make-argument :name "metric"
 						 :type :metric))
 		 :function #'least)
+   (make-command :name "ngrams"
+		 :aliases '("n")
+		 :description "Prints the most frequent ngrams for a metric on a layout."
+		 :arguments (list (make-argument :name "layout"
+						 :type :layout)
+				  (make-argument :name "metric"
+						 :type :metric))
+		 :function #'list-ngrams)
    (make-command :name "add-corpus"
 		 :aliases '("ac")
 		 :description "Loads a corpus from a text file and adds it to the list of corpora."
@@ -39,6 +47,11 @@
 		 :arguments (list (make-argument :name "corpus"
 						 :type :corpus))
 		 :function #'remove-corpus)
+   (make-command :name "list-metrics"
+		 :aliases '("lm")
+		 :description "Lists the available metrics."
+		 :arguments ()
+		 :function #'list-metrics)
    (make-command :name "default-keyboard"
 		 :aliases '("dk")
 		 :description "Sets the default keyboard."
