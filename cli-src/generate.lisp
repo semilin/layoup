@@ -24,11 +24,10 @@
 											       (metric-list-trigraphs *metrics*)))))
 	 (current-stats (layoup:analyze-keys corpus keys metric-results))
 	 (fitting-constraint (funcall comparator2 (gethash constrained-metric current-stats) baseline)))
-    (print baseline)
-    (print (gethash constrained-metric current-stats))
     (loop for temp downfrom 100 to -2
 	  do (progn
-	       (print temp)
+	       (format t "~C~a    " #\return temp)
+	       (finish-output)
 	       (dotimes (i (* 5 (- 100 temp)))
 		 (let ((a (random-pos))
 		       (b (random-pos)))
