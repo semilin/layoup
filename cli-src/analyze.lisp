@@ -1,10 +1,13 @@
 (in-package :layoup/cli)
 
-(defun format-stat (value layout)
+(defun stat-percentage (value layout)
+  (* 100
+     (/ value (layoup:keys-total (layout-matrix layout)
+				 (defaults-corpus *defaults*)))))
+
+(defun format-percentage (percentage)
   (format nil "~1,2f%~%"
-	  (* 100
-	     (/ value (layoup:keys-total (layout-matrix layout)
-					 (defaults-corpus *defaults*))))))
+	  percentage))
 
 (defun rank (metric)
   (declare (type metric metric))
@@ -15,20 +18,20 @@
 							 (layout-matrix v)
 							 metric-results)))
 			(list v
-			      (gethash metric result))))
+			      (stat-percentage (gethash metric result) v))))
 	(sort (lambda (a b) (> (second a)
 			  (second b)))))))
 
 (defun most (metric)
   (mapcar (lambda (result) (format T "~a ~a"
 			      (cyan (layout-name (first result)))
-			      (format-stat (second result) (first result))))
+			      (format-percentage (second result))))
 	  (subseq (rank metric) 0 10)))
 
 (defun least (metric)
   (mapcar (lambda (result) (format T "~a ~a" 
 			      (cyan (layout-name (first result)))
-			      (format-stat (second result) (first result))))
+			      (format-percentage (second result))))
 	  (reverse (subseq (reverse (rank metric)) 0 10))))
 
 (defun analyze (layout)
