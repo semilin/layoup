@@ -1,2 +1,4 @@
 #!/bin/sh
-sbcl --eval "(progn (asdf:make :layoup/cli) (quit))"
+sbcl --eval '(progn (asdf:load-asd (merge-pathnames "layoup.asd" (uiop:getcwd))) 
+(asdf:make :layoup/cli) 
+(quit))'
