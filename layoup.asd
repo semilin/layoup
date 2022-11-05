@@ -46,6 +46,7 @@
   :components ((:module "cli-src"
 		:components
 		((:file "main")
+		 (:file "analyze")
 		 (:file "layouts")
 		 (:file "commands"))))
   :description "CLI for layoup")

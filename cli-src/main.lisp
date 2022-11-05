@@ -32,17 +32,6 @@
 		       l))
 	       ))))
 
-(defun analyze (layout)
-  (let* ((metric-results (layoup:calculate-metrics (defaults-keyboard *defaults*)
-						   *metrics*))
-	 (results (layoup:analyze-keys (defaults-corpus *defaults*)
-				       (layout-matrix layout)
-				       metric-results)))    
-    (loop for k being the hash-keys in results using (hash-value v) do
-      (format T "~a: ~1,2f%~%" (cyan (layoup:metric-name k))
-	      (* 100
-		 (/ v (layoup:keys-total (layout-matrix layout) (defaults-corpus *defaults*))))))))
-
 (defun load-defaults ()
   (setf *defaults* (if (probe-file "./data/defaults.out")
 		       (cl-store:restore "./data/defaults.out")
@@ -150,7 +139,18 @@
     (:keyboard (alexandria:switch (user-arg :test #'equal)
 		 ("matrix" #'layoup:matrix-pos)
 		 ("ansi" #'layoup:ansi-pos)
-		 (otherwise (error 'argument-error :message (format t "Keyboard ~a does not exist.~%" (yellow user-arg))))))))
+		 (otherwise (error 'argument-error :message (format t "Keyboard ~a does not exist.~%" (yellow user-arg))))))
+    (:metric (let ((bg (remove-if-not (lambda (m)
+					(equal user-arg (metric-name m)))
+				      (metric-list-bigraphs *metrics*)))
+		   (tg (remove-if-not (lambda (m)
+					(equal user-arg (metric-name m)))
+				      (metric-list-trigraphs *metrics*))))
+	       (if tg
+		   (car tg)
+		   (if bg
+		       (car bg)
+		       (error 'argument-error :message (format t "Metric ~a does not exist.~%" (yellow user-arg)))))))))
 
 (defun parse-command (command args)
   (if (not (command-arguments command))

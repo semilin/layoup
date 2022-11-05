@@ -8,6 +8,18 @@
 		 :arguments (list (make-argument :name "layout"
 						 :type :layout))
 		 :function #'analyze)
+   (make-command :name "most"
+		 :aliases '("m")
+		 :description "Lists the layouts with the most of a metric."
+		 :arguments (list (make-argument :name "metric"
+						 :type :metric))
+		 :function #'most)
+   (make-command :name "least"
+		 :aliases '("l")
+		 :description "Lists the layouts with the least of a metric."
+		 :arguments (list (make-argument :name "metric"
+						 :type :metric))
+		 :function #'least)
    (make-command :name "add-corpus"
 		 :aliases '("ac")
 		 :description "Loads a corpus from a text file and adds it to the list of corpora."
