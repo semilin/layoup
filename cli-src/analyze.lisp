@@ -45,14 +45,16 @@
   (mapcar (lambda (result) (format T "~a ~a~%"
 			      (cyan (layout-name (first result)))
 			      (format-percentage (second result))))
-	  (subseq (rank metric) 0 (min (hash-table-size *layouts*)
+	  (subseq (rank metric) 0 (min (- (hash-table-size *layouts*)
+					  1)
 				       10))))
 
 (defun least (metric)
   (mapcar (lambda (result) (format T "~a ~a~%" 
 			      (cyan (layout-name (first result)))
 			      (format-percentage (second result))))
-	  (reverse (subseq (reverse (rank metric)) 0 (min (hash-table-size *layouts*)
+	  (reverse (subseq (reverse (rank metric)) 0 (min (- (hash-table-size *layouts*)
+							     1)
 							  10)))))
 
 (defun analyze (layout)
