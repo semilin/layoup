@@ -58,4 +58,4 @@
 				       metric-results)))    
     (loop for k being the hash-keys in results using (hash-value v) do
       (format t "~a: ~a~%" (cyan (metric-name k))
-	      (format-stat v layout)))))
+	      (format-percentage (stat-percentage v layout))))))
