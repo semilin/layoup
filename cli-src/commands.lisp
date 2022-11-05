@@ -31,6 +31,7 @@
    (make-command :name "constrained-anneal"
 		 :aliases '("ca")
 		 :description "Generates a layout with an optimized metric and a constrained metric."
+		 :examples '("constrained-anneal less sfb more rolls 20")
 		 :arguments (list (make-argument :name "optimized-comparator"
 						 :type :comparator)
 				  (make-argument :name "optimized-metric"

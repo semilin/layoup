@@ -107,6 +107,7 @@
   (name "" :type string)
   (aliases () :type list)
   (description "" :type string)
+  (examples () :type list)
   (arguments () :type list)
   function)
 
@@ -123,6 +124,9 @@
   (format t "~a: ~a~%"
 	  (cyan "usage")
 	  (command-usage command))
+  (format t "~a: ~{~a~^~%~}~%"
+	  (cyan "examples")
+	  (command-examples command))
   (format t "~a: ~a~%"
 	  (cyan "aliases")
 	  (command-aliases command)))
