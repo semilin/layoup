@@ -99,10 +99,8 @@
       nil))
 
 (defun pinky-sfb? (a b)
-  (if (and (pinky a)
-	   (same-finger a b))
-      (distance a b)
-      nil))
+  (and (pinky a)
+       (same-finger a b)))
 
 (defun ring-sfb? (a b)
   (and (ring a)

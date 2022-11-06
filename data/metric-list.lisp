@@ -21,9 +21,15 @@
 	    (make-metric :name "pinky-sfb-distance"
 			 :fn #'pinky-sfb-distance
 			 :ngram :bigram)
+	    (make-metric :name "pinky-sfs-distance"
+			 :fn #'pinky-sfb-distance
+			 :ngram :skipgram)
 	    (make-metric :name "ring-sfb-distance"
 			 :fn #'ring-sfb-distance
-			 :ngram :bigram))
+			 :ngram :bigram)
+	    (make-metric :name "ring-sfs-distance"
+			 :fn #'ring-sfb-distance
+			 :ngram :skipgram))
  :trigraphs (list
 	     (make-metric :name "alternation"
 			  :fn (lambda (a b c) (if (alternate? a b c) 1.0 nil))

@@ -6,4 +6,16 @@
 				:threshold 3.5)
 	       (make-constraint :metric (get-metric "sfs-distance")
 				:goal :less
-				:threshold 6.5)))
+				:threshold 6.5)
+	       (make-constraint :metric (get-metric "pinky-sfb-distance")
+				:goal :less
+				:threshold 0.06)
+	       (make-constraint :metric (get-metric "pinky-sfs-distance")
+				:goal :less
+				:threshold 0.40)
+	       (make-constraint :metric (get-metric "ring-sfb-distance")
+				:goal :less
+				:threshold 0.40)
+	       (make-constraint :metric (get-metric "ring-sfs-distance")
+				:goal :less
+				:threshold 1.30)))
