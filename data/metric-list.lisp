@@ -17,6 +17,12 @@
 			 :ngram :bigram)
 	    (make-metric :name "lsb-distance"
 			 :fn #'lsb-distance
+			 :ngram :bigram)
+	    (make-metric :name "pinky-sfb-distance"
+			 :fn #'pinky-sfb-distance
+			 :ngram :bigram)
+	    (make-metric :name "ring-sfb-distance"
+			 :fn #'ring-sfb-distance
 			 :ngram :bigram))
  :trigraphs (list
 	     (make-metric :name "alternation"

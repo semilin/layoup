@@ -2,6 +2,14 @@
 
 ;;; UTILITIES
 
+(defun pinky (pos)
+  (or (eq LP (pos-finger pos))
+      (eq RP (pos-finger pos))))
+
+(defun ring (pos)
+  (or (eq LR (pos-finger pos))
+      (eq RR (pos-finger pos))))
+
 (defun pos-hand (pos)
   (declare (type pos pos))
   (finger-hand (pos-finger pos)))
@@ -88,4 +96,24 @@
 (defun lsb-distance (a b)
   (if (lsb? a b)
       (horizontal-distance a b)
-    nil))
+      nil))
+
+(defun pinky-sfb? (a b)
+  (if (and (pinky a)
+	   (same-finger a b))
+      (distance a b)
+      nil))
+
+(defun ring-sfb? (a b)
+  (and (ring a)
+       (same-finger a b)))
+
+(defun pinky-sfb-distance (a b)
+  (if (pinky-sfb? a b)
+      (distance a b)
+      nil))
+
+(defun ring-sfb-distance (a b)
+  (if (ring-sfb? a b)
+      (distance a b)
+      nil))
