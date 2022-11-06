@@ -54,6 +54,15 @@
 				*profiles*)
 		       p))))))
 
+(defun profile (p)
+  (declare (type constraint-profile p))
+  (loop for c in (constraint-profile-constraints p)
+	do (format t "~a ~a than ~a (leniency ~a)~%"
+		   (cyan (metric-name (constraint-metric c)))
+		   (yellow (format nil "~a" (constraint-goal c)))
+		   (yellow (format nil "~a" (constraint-threshold c)))
+		   (yellow (format nil "~a" (constraint-leniency c))))))
+
 (defun load-defaults ()
   (setf *defaults* (if (probe-file "./data/defaults.out")
 		       (cl-store:restore "./data/defaults.out")

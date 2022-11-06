@@ -32,6 +32,15 @@
 			 :ngram :skipgram)
 	    (make-metric :name "pinky-sfr"
 			 :fn (lambda (a b) (if (pinky-sfr? a b) 1.0 nil))
+			 :ngram :bigram)
+	    (make-metric :name "bottom-row"
+			 :fn #'bottom-row-usage
+			 :ngram :bigram)
+	    (make-metric :name "middle-ring-scissor"
+			 :fn (lambda (a b) (if (middle-ring-scissor? a b) 1.0 nil))
+			 :ngram :bigram)
+	    (make-metric :name "pinky-ring-scissor"
+			 :fn (lambda (a b) (if (pinky-ring-scissor? a b) 1.0 nil))
 			 :ngram :bigram))
  :trigraphs (list
 	     (make-metric :name "alternation"

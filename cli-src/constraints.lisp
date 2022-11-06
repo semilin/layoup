@@ -4,7 +4,7 @@
   (metric nil :type metric)
   (goal nil :type symbol)
   (threshold nil :type number)
-  (weight 1.0 :type number))
+  (leniency 1.0 :type number))
 
 (defstruct constraint-profile
   (name nil :type string)

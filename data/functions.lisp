@@ -2,13 +2,22 @@
 
 ;;; UTILITIES
 
-(defun pinky (pos)
+(defun pinky? (pos)
   (or (eq LP (pos-finger pos))
       (eq RP (pos-finger pos))))
 
-(defun ring (pos)
+(defun ring? (pos)
   (or (eq LR (pos-finger pos))
       (eq RR (pos-finger pos))))
+
+(defun middle? (pos)
+  (or (eq LM (pos-finger pos))
+      (eq RM (pos-finger pos))))
+
+(defun index? (pos)
+  (or (eq LI (pos-finger pos))
+      (eq RI (pos-finger pos))))
+
 
 (defun pos-hand (pos)
   (declare (type pos pos))
@@ -99,11 +108,11 @@
       nil))
 
 (defun pinky-sfb? (a b)
-  (and (pinky a)
+  (and (pinky? a)
        (same-finger a b)))
 
 (defun ring-sfb? (a b)
-  (and (ring a)
+  (and (ring? a)
        (same-finger a b)))
 
 (defun pinky-sfb-distance (a b)
@@ -118,5 +127,26 @@
 
 (defun pinky-sfr? (a b)
   (and (sfr? a b)
-       (pinky a)
-       (same-finger a b)))
+       (pinky? a)))
+
+(defun bottom-row-usage (a b)
+  (if (and (= (pos-row a) 2)
+	   (= (pos-row b) 2))
+      1.0
+      nil))
+
+(defun middle-ring-scissor? (a b)
+  (and (adjacent-finger a b)
+       (or (and (middle? a)
+		(ring? b))
+	   (and (ring? a)
+		(middle? b)))       
+       (>= (vertical-distance a b) 2)))
+
+(defun pinky-ring-scissor? (a b)
+  (and (adjacent-finger a b)
+       (or (and (pinky? a)
+		(ring? b))
+	   (and (ring? a)
+		(pinky? b)))
+       (>= (vertical-distance a b) 2)))

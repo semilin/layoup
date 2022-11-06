@@ -73,6 +73,12 @@
 		 :description "Lists the available metrics."
 		 :arguments ()
 		 :function #'list-metrics)
+   (make-command :name "profile"
+		 :aliases '("p")
+		 :description "Lists the constraints from the profile."
+		 :arguments (list (make-argument :name "profile"
+						 :type :profile))
+		 :function #'profile)
    (make-command :name "default-keyboard"
 		 :aliases '("dk")
 		 :description "Sets the default keyboard."
