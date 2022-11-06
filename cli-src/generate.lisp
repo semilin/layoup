@@ -13,11 +13,11 @@
 					(gethash (constraint-metric c) stats)
 					(constraint-threshold c))
 			       0
-			       (abs (* (constraint-weight c)
-				       (- (constraint-threshold c)
-					  (gethash (constraint-metric c) stats))))))
+			       (expt (* (constraint-weight c)
+					(abs (- (constraint-threshold c)
+						(gethash (constraint-metric c) stats))))
+				     1.2)))
 			 constraints))
-     1.4
      (/ 1 (length constraints))))
 
 (defun sum-deviance-optimized (deviance opt-comparator optimized stats)
@@ -56,12 +56,12 @@
 	 (current-stats (layoup:analyze-keys corpus keys metric-results))
 	 (current-deviance (constraint-deviance current-stats constraints))
 	 (current-total (sum-deviance-optimized current-deviance opt-comparator optimized current-stats)))
-    (loop for temp downfrom 100 to -5
+    (loop for temp downfrom 100 to -2
 	  do (progn
-	       (format t "~C~a%    " #\return temp)
-	       ;;(format t "~a%: ~a + ~a = ~a~%" temp current-deviance (gethash optimized current-stats) current-total)
+	       ;;(format t "~C~a%    " #\return temp)
+	       (format t "~a%: ~a + ~a = ~a~%" temp current-deviance (gethash optimized current-stats) current-total)
 	       (finish-output)
-	       (dotimes (i (* 3 (- 100 temp)))
+	       (dotimes (i (round (expt (* 5 (- 100 temp)) 1.3)))
 		 (let ((a (random-pos))
 		       (b (random-pos)))
 		   (swap-keys a b keys)
@@ -72,7 +72,8 @@
 			 (setf current-stats new-stats
 			       current-deviance new-deviance
 			       current-total new-total)			 
-			 (if (> temp (random 100))
+			 (if (<= (* 100 (/ (abs (- new-total current-total)) current-total))
+				 temp)
 			     (setf current-stats new-stats
 				   current-deviance new-deviance
 				   current-total new-total)
@@ -80,6 +81,10 @@
     (format t "~%")
     (print-matrix keys)
     (analyze (make-layout :name "Generated" :matrix keys :keyboard (defaults-keyboard *defaults*)))
+    (loop for c in constraints
+	  do (if (> (gethash (constraint-metric c) current-stats)
+		    (constraint-threshold c))
+		 (format t "~a constraint failed~%" (metric-name (constraint-metric c)))))
     keys))
 
 (defun constraint-multithreaded-anneal (opt-comparator optimized profile)
@@ -94,8 +99,8 @@
 								    (/ (constraint-threshold c) 100))))
 			      (constraint-profile-constraints profile)))
 	 (threads (loop for i from 1 to 50
-			collect (bt2:make-thread (lambda ()
-						   (constraint-anneal opt-comparator optimized profile))))))
+			collect (bordeaux-threads:make-thread (lambda ()
+								(constraint-anneal opt-comparator optimized profile))))))
     (let ((keys (first
 		 (first
 		  (sort (mapcar (lambda (k) (let ((stats (analyze-keys corpus k metric-results)))
@@ -105,7 +110,7 @@
 						  optimized
 						  stats))))
 				(loop for thr in threads
-				      collect (bt2:join-thread thr)))
+				      collect (bordeaux-threads:join-thread thr)))
 			(lambda (a b) (< (second a) (second b))))))))
       (format t "~%~%")
       (print-matrix keys)
