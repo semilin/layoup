@@ -39,6 +39,16 @@
 				  (make-argument :name "constraint-profile"
 						 :type :profile))
 		 :function #'constraint-anneal)
+   (make-command :name "constrainted-anneal-multithreaded"
+		 :aliases '("cam")
+		 :description "Performs multiple constrained anneals at the same time."
+		 :arguments (list (make-argument :name "optimized-comparator"
+						 :type :comparator)
+				  (make-argument :name "optimized-metric"
+						 :type :metric)
+				  (make-argument :name "constraint-profile"
+						 :type :profile))
+		 :function #'constraint-multithreaded-anneal)
    (make-command :name "add-corpus"
 		 :aliases '("ac")
 		 :description "Loads a corpus from a text file and adds it to the list of corpora."
