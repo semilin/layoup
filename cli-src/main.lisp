@@ -229,6 +229,8 @@
   (load-defaults)
   (load-profiles)
 
+  (setf *random-state* (make-random-state t))
+
   #+sb-ext (sb-ext:disable-debugger)
   (exit-on-ctrl-c
     (loop do (progn
