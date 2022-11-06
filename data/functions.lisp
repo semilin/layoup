@@ -115,3 +115,8 @@
   (if (ring-sfb? a b)
       (distance a b)
       nil))
+
+(defun pinky-sfr? (a b)
+  (and (sfr? a b)
+       (pinky a)
+       (same-finger a b)))

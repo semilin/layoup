@@ -29,7 +29,10 @@
 			 :ngram :bigram)
 	    (make-metric :name "ring-sfs-distance"
 			 :fn #'ring-sfb-distance
-			 :ngram :skipgram))
+			 :ngram :skipgram)
+	    (make-metric :name "pinky-sfr"
+			 :fn (lambda (a b) (if (pinky-sfr? a b) 1.0 nil))
+			 :ngram :bigram))
  :trigraphs (list
 	     (make-metric :name "alternation"
 			  :fn (lambda (a b c) (if (alternate? a b c) 1.0 nil))
