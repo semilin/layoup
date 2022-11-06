@@ -30,18 +30,14 @@
 		 :function #'list-ngrams)
    (make-command :name "constrained-anneal"
 		 :aliases '("ca")
-		 :description "Generates a layout with an optimized metric and a constrained metric."
-		 :examples '("constrained-anneal less sfb more rolls 20")
+		 :description "Generates a layout with an optimized metric using a constraint profile."
+		 :examples '("constrained-anneal less sfb default")
 		 :arguments (list (make-argument :name "optimized-comparator"
 						 :type :comparator)
 				  (make-argument :name "optimized-metric"
 						 :type :metric)
-				  (make-argument :name "constrained-comparator"
-						 :type :comparator)
-				  (make-argument :name "constrained-metric"
-						 :type :metric)
-				  (make-argument :name "constraint-percentage"
-						 :type :number))
+				  (make-argument :name "constraint-profile"
+						 :type :profile))
 		 :function #'constraint-anneal)
    (make-command :name "add-corpus"
 		 :aliases '("ac")

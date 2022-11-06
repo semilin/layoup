@@ -46,6 +46,7 @@
   :components ((:module "cli-src"
 		:components
 		((:file "main")
+		 (:file "constraints")
 		 (:file "analyze")
 		 (:file "generate")
 		 (:file "layouts")

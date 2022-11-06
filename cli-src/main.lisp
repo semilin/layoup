@@ -11,6 +11,7 @@
 (defvar *layouts* (make-hash-table :test #'equal))
 (defvar *corpora* (make-hash-table :test #'equal))
 (defvar *keyboards* (make-hash-table :test #'equal))
+(defvar *profiles* (make-hash-table :test #'equal))
 (defvar *defaults* nil)
 
 (defun load-metrics ()
@@ -30,6 +31,28 @@
 				     (substitute #\_ #\SPACE))
 				*layouts*)
 		       l))))))
+
+(defun get-metric (s)
+  (declare (type string s))
+  (let ((result (remove-if-not (lambda (m) (string-equal (metric-name m) s))
+			       (append (metric-list-bigraphs *metrics*)
+				       (metric-list-trigraphs *metrics*)))))
+    (if result
+	(first result)
+	nil)))
+
+(defun load-profiles ()
+  (loop for f in (uiop:directory-files "./data/constraint-profiles/")
+	do (with-open-file (in f)
+	     (with-standard-io-syntax
+	       (in-package :layoup/cli)
+	       (let ((p (eval (read in))))
+		 (setf (gethash (->> p
+				     constraint-profile-name
+				     string-downcase
+				     (substitute #\_ #\SPACE))
+				*profiles*)
+		       p))))))
 
 (defun load-defaults ()
   (setf *defaults* (if (probe-file "./data/defaults.out")
@@ -168,11 +191,16 @@
 								      (yellow user-arg)
 								      (cyan "less")
 								      (cyan "more"))))))
+    (:profile (let ((p (gethash user-arg *profiles*)))
+		(if p
+		    p
+		    (error 'argument-error :message (format t "Constraint profile ~a does not exist.~%"
+							    (yellow user-arg))))))
     (:number (with-input-from-string (in user-arg)
 	       (let ((v (read in)))
 		 (if (numberp v)
 		     v
-		     (error 'argument-error :message (format t "~a is not a number."
+		     (error 'argument-error :message (format t "~a is not a number.~%"
 							     (yellow user-arg)))))))))
 
 (defun parse-command (command args)
@@ -199,12 +227,13 @@
   (load-layouts)
   (load-corpora)
   (load-defaults)
+  (load-profiles)
 
   #+sb-ext (sb-ext:disable-debugger)
   (exit-on-ctrl-c
-   (loop do (progn
-	      (format t "> ")
-	      (finish-output)
-	      (let ((args (str:words (read-line))))
-		(if args (handler-case (get-command args)
-			   (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
+    (loop do (progn
+	       (format t "> ")
+	       (finish-output)
+	       (let ((args (str:words (read-line))))
+		 (if args (handler-case (get-command args)
+			    (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
