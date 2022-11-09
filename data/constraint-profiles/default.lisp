@@ -15,20 +15,26 @@
 	       (make-constraint :metric (get-metric "pinky-sfs-distance")
 				:goal :less
 				:threshold 0.40
-				:leniency 0.6)
+				:leniency 0.5)
 	       (make-constraint :metric (get-metric "ring-sfb-distance")
 				:goal :less
 				:threshold 0.40)
 	       (make-constraint :metric (get-metric "ring-sfs-distance")
 				:goal :less
-				:threshold 0.60
-				:leniency 0.80)
+				:threshold 0.65
+				:leniency 1)
+	       (make-constraint :metric (get-metric "middle-sfb-distance")
+				:goal :less
+				:threshold 0.5)
+	       (make-constraint :metric (get-metric "middle-sfs-distance")
+				:goal :less
+				:threshold 2)
 	       (make-constraint :metric (get-metric "pinky-sfr")
 				:goal :less
 				:threshold 0.35)
 	       (make-constraint :metric (get-metric "lsb")
 				:goal :less
-				:threshold 1.3)
+				:threshold 1.5)
 	       (make-constraint :metric (get-metric "middle-ring-scissor")
 				:goal :less
 				:threshold 0.08)

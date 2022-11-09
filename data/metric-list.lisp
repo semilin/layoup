@@ -30,6 +30,12 @@
 	    (make-metric :name "ring-sfs-distance"
 			 :fn #'ring-sfb-distance
 			 :ngram :skipgram)
+	    (make-metric :name "middle-sfb-distance"
+			 :fn #'middle-sfb-distance
+			 :ngram :bigram)
+	    (make-metric :name "middle-sfs-distance"
+			 :fn #'middle-sfb-distance
+			 :ngram :skipgram)
 	    (make-metric :name "pinky-sfr"
 			 :fn (lambda (a b) (if (pinky-sfr? a b) 1.0 nil))
 			 :ngram :bigram)

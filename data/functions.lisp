@@ -115,6 +115,10 @@
   (and (ring? a)
        (same-finger a b)))
 
+(defun middle-sfb? (a b)
+  (and (middle? a)
+       (same-finger a b)))
+
 (defun pinky-sfb-distance (a b)
   (if (pinky-sfb? a b)
       (distance a b)
@@ -122,6 +126,11 @@
 
 (defun ring-sfb-distance (a b)
   (if (ring-sfb? a b)
+      (distance a b)
+      nil))
+
+(defun middle-sfb-distance (a b)
+  (if (middle-sfb? a b)
       (distance a b)
       nil))
 
