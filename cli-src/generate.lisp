@@ -6,25 +6,25 @@
 	    :row (random 3)))
 
 (defun constraint-deviance (stats constraints)
-  (* (reduce #'+ (mapcar (lambda (c)
-			   (if (funcall (ecase (constraint-goal c)
-					  (:less '<=)
-					  (:more '>=))
-					(gethash (constraint-metric c) stats)
-					(constraint-threshold c))
-			       0
-			       (expt (* (abs (- (constraint-threshold c)
-						(gethash (constraint-metric c) stats)))
-					(/ 1 (constraint-threshold c))
-					(* 1000))
-				     (* 2 (constraint-leniency c)))))
-			 constraints))
-     (/ 1 (length constraints))))
+  (reduce #'* (mapcar (lambda (c)
+			(if (funcall (ecase (constraint-goal c)
+				       (:less '<=)
+				       (:more '>=))
+				     (gethash (constraint-metric c) stats)
+				     (constraint-threshold c))
+			    1
+			    (+ 1 (expt (/ (- (gethash (constraint-metric c) stats)
+					     (constraint-threshold c))
+					  (* 0.4
+					     (constraint-leniency c)
+					     (constraint-threshold c)))
+				       1.5))))
+		      constraints)))
 
 (defun sum-deviance-optimized (deviance opt-comparator optimized stats)
   (if (eq opt-comparator #'<=)
-      (+ deviance (gethash optimized stats))
-      (- deviance (gethash optimized stats))))
+      (* deviance (gethash optimized stats))
+      (/ (gethash optimized stats) deviance)))
 
 (defun constraint-anneal (opt-comparator optimized profile)
   (declare (type metric optimized)
@@ -60,7 +60,7 @@
     (loop for temp downfrom 100 to -2
 	  do (progn
 	       ;;(format t "~C~a%    " #\return temp)
-	       (format t "~a%: ~a + ~a = ~a~%" temp current-deviance (gethash optimized current-stats) current-total)
+	       (format t "~a%: ~a * ~a = ~a~%" temp current-deviance (gethash optimized current-stats) current-total)
 	       (finish-output)
 	       (dotimes (i (round (expt (* 3 (- 100 temp)) 1.3)))
 		 (let ((a (random-pos))
