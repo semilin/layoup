@@ -243,8 +243,6 @@
   #+sb-ext (sb-ext:disable-debugger)
   (exit-on-ctrl-c
     (loop do (progn
-	       (format t "> ")
-	       (finish-output)
-	       (let ((args (str:words (read-line))))
+	       (let ((args (str:words (linedit:linedit :prompt "-> "))))
 		 (if args (handler-case (get-command args)
 			    (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
