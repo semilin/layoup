@@ -8,6 +8,12 @@
 		 :arguments (list (make-argument :name "layout"
 						 :type :layout))
 		 :function #'analyze)
+   (make-command :name "view"
+		 :aliases '("v")
+		 :description "Prints the matrix for a layout."
+		 :arguments (list (make-argument :name "layout"
+						 :type :layout))
+		 :function (lambda (l) (print-matrix (layout-matrix l))))
    (make-command :name "most"
 		 :aliases '("m")
 		 :description "Lists the layouts with the most of a metric."
