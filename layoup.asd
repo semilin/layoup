@@ -6,7 +6,8 @@
   :version "0.1.0"
   :author "semi"
   :license "GPLv3"
-  :depends-on ("alexandria")
+  :depends-on ("alexandria"
+	       "defstar")
   :components ((:module "src"
 		:components
 		((:file "main")

@@ -5,7 +5,8 @@
   matrix
   keyboard)
 
-(defun key-matrix (&rest row-list)
+(defun* (key-matrix -> (simple-array character *))
+    (&rest row-list)
   "Converts a list of rows into a 2d key array. Each row is a string with no spaces, e.g. \"asdfghjkl;\" "
   (let ((l (mapcar (lambda (row) (coerce row 'list)) row-list)))
     (make-array (list (length l)
@@ -13,11 +14,10 @@
 		:initial-contents l
 		:element-type 'character)))
 
-(defun pos-to-key (pos keys)
+(defun* (pos-to-key -> character)
+    ((pos pos) (keys (simple-array character *)))
   "Returns the key at POS on KEYS."
-  (declare (type pos pos)
-	   (type (simple-array character *) keys)
-	   (inline)
+  (declare (inline)
 	   (optimize (speed 3) (safety 1)))
   (aref keys
 	(pos-row pos)

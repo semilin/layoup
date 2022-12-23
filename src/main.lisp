@@ -1,5 +1,5 @@
 (defpackage :layoup
-  (:use :cl)
+  (:use :cl :defstar)
   (:export
    :pos
    :pos-p

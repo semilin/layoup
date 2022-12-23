@@ -34,6 +34,11 @@
 				  (make-argument :name "metric"
 						 :type :metric))
 		 :function #'list-ngrams)
+   (make-command :name "random-layout"
+		 :aliases '("rl")
+		 :description "Generates a random layout."
+		 :arguments ()
+		 :function (lambda () (print-matrix (random-layout))))
    (make-command :name "constrained-anneal"
 		 :aliases '("ca")
 		 :description "Generates a layout with an optimized metric using a constraint profile."
@@ -44,7 +49,7 @@
 						 :type :metric)
 				  (make-argument :name "constraint-profile"
 						 :type :profile))
-		 :function #'constraint-anneal)
+		 :function #'constraint-anneal)   
    (make-command :name "constrainted-anneal-multithreaded"
 		 :aliases '("cam")
 		 :description "Performs multiple constrained anneals at the same time."
@@ -55,6 +60,13 @@
 				  (make-argument :name "constraint-profile"
 						 :type :profile))
 		 :function #'constraint-multithreaded-anneal)
+   (make-command :name "first-matching"
+		 :aliases '("fm")
+		 :description "Finds the first layout that matches the constraints."
+		 :examples '("find-matching default")
+		 :arguments (list (make-argument :name "constraint-profile"
+						 :type :profile))
+		 :function #'first-matching)
    (make-command :name "add-corpus"
 		 :aliases '("ac")
 		 :description "Loads a corpus from a text file and adds it to the list of corpora."

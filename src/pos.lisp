@@ -25,18 +25,18 @@
   (x 0 :type number)
   (y 0 :type number))
 
-(defun standard-finger (col)
+(defun* (standard-finger -> finger)
+    ((col integer))
   "Returns the finger that would be used to hit the key with standard fingering."
-  (declare (type integer col))
   (cond ((= col 4) LI)
 	((= col 5) RI)
 	((<= col 3) (nth (max col 0) finger-list))
 	((>= col 6) (nth (min col 9) finger-list))))
 
-(defun ansi-pos (col row)
+(defun* (ansi-pos -> pos)
+    ((col integer)
+     (row integer))
   "Returns the position that would apply to an ansi keyboard with standard fingering."
-  (declare (type integer col)
-	   (type integer row))
   (make-pos :finger (standard-finger col)
 	    :col col
 	    :row row
@@ -45,7 +45,8 @@
 			    (T 0)))
 	    :y row))
 
-(defun matrix-pos (col row)
+(defun* (matrix-pos -> pos)
+    ((col integer) (row integer))
   "Returns the position that would apply to a matrix keyboard."
   (declare (type integer col)
 	   (type integer row))

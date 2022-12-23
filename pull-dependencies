@@ -15,4 +15,5 @@
 	      :with-user-abort
 	      :str
 	      :cl-ansi-text
-	      :linedit))
+	      :linedit
+	      :defstar))
