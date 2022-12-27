@@ -29,7 +29,7 @@
 		 (setf (gethash (->> l
 				     layout-name
 				     string-downcase
-				     (substitute #\_ #\SPACE))
+				     (substitute #\- #\SPACE))
 				*layouts*)
 		       l))))))
 
