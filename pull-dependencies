@@ -16,4 +16,6 @@
 	      :str
 	      :cl-ansi-text
 	      :linedit
-	      :defstar))
+	      :defstar
+	      :trivial-features
+	      :trivial-download))

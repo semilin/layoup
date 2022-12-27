@@ -124,4 +124,4 @@
 		 :aliases '("exit" "q")
 		 :description "Quits the program."
 		 :arguments nil
-		 :function (lambda () (prepare-quit) (uiop:quit)))))
+		 :function #'graceful-quit)))

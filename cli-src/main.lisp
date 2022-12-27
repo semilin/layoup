@@ -8,6 +8,7 @@
   keyboard)
 
 (defvar *metrics* nil)
+(defvar *data-dir* nil)
 (defvar *layouts* (make-hash-table :test #'equal))
 (defvar *corpora* (make-hash-table :test #'equal))
 (defvar *keyboards* (make-hash-table :test #'equal))
@@ -15,13 +16,13 @@
 (defvar *defaults* nil)
 
 (defun load-metrics ()
-  (load "./data/functions.lisp")
-  (with-open-file (in #P"./data/metric-list.lisp")
+  (load (merge-pathnames "functions.lisp" *data-dir*))
+  (with-open-file (in (merge-pathnames "metric-list.lisp" *data-dir*))
     (with-standard-io-syntax
       (setf *metrics* (eval (read in))))))
 
 (defun load-layouts ()
-  (loop for f in (uiop:directory-files "./data/layouts/")
+  (loop for f in (uiop:directory-files (merge-pathnames "layouts/" *data-dir*))
 	do (with-open-file (in f)
 	     (with-standard-io-syntax
 	       (let ((l (eval (read in))))
@@ -42,7 +43,7 @@
 	nil)))
 
 (defun load-profiles ()
-  (loop for f in (uiop:directory-files "./data/constraint-profiles/")
+  (loop for f in (uiop:directory-files (merge-pathnames "constraint-profiles/" *data-dir*))
 	do (with-open-file (in f)
 	     (with-standard-io-syntax
 	       (in-package :layoup/cli)
@@ -64,13 +65,13 @@
 		   (yellow (format nil "~a" (constraint-leniency c))))))
 
 (defun load-defaults ()
-  (setf *defaults* (if (probe-file "./data/defaults.out")
-		       (cl-store:restore "./data/defaults.out")
+  (setf *defaults* (if (probe-file (merge-pathnames "defaults.out" *data-dir*))
+		       (cl-store:restore (merge-pathnames "defaults.out" *data-dir*))
 		       (make-defaults :corpus (gethash "monkeytype" *corpora*)
 				      :keyboard #'matrix-pos))))
 
 (defun save-defaults ()
-  (cl-store:store *defaults* "./data/defaults.out"))
+  (cl-store:store *defaults* (merge-pathnames "defaults.out" *data-dir*)))
 
 (defun default-keyboard (keyboard)
   (setf (defaults-keyboard *defaults*) keyboard))
@@ -79,7 +80,7 @@
   (setf (defaults-corpus *defaults*) corpus))
 
 (defun load-corpora ()
-  (setf *corpora* (cl-store:restore "./data/corpora.out")))
+  (setf *corpora* (cl-store:restore (merge-pathnames "corpora.out" *data-dir*))))
 
 (defun list-corpora ()
   (format t "corpora:~%")
@@ -95,7 +96,7 @@
 		  (metric-list-trigraphs *metrics*))))
 
 (defun save-corpora ()
-  (cl-store:store *corpora* "./data/corpora.out"))
+  (cl-store:store *corpora* (merge-pathnames "corpora.out" *data-dir*)))
 
 (defun add-corpus (path name)
   (let ((corpus (new-corpus)))
@@ -120,11 +121,14 @@
   (save-corpora)
   (save-defaults))
 
+(defun graceful-quit ()
+  (prepare-quit)
+  (uiop:quit))
+
 (defmacro exit-on-ctrl-c (&body body)
   `(handler-case (with-user-abort:with-user-abort (progn ,@body))
      (with-user-abort:user-abort ()
-       (prepare-quit)
-       (uiop:quit))))
+       (graceful-quit))))
 
 (define-condition user-error (error) ())
 
@@ -231,7 +235,39 @@
 			   (parse-command command (rest args))))
 	  *commands*))
 
+(defun download (from to &optional bin?)
+  (let ((full-to (uiop:native-namestring (merge-pathnames to *data-dir*))))
+    (trivial-download:download from full-to)
+    (format t "~%")))
+
 (defun main ()
+  (setf *data-dir*
+	(if (probe-file (merge-pathnames "data/" (uiop:getcwd)))
+	    (merge-pathnames "data/" (uiop:getcwd))
+	    #+darwin "~/Library/Applications Support/layoup/"
+	    #+windows "C:\\ProgramData\\layoup\\"
+	    #+linux "~/.local/share/layoup/"))
+  (if (not (probe-file *data-dir*))
+      (if (progn (format t "layoup's data directory does not exist.~%")
+		 (y-or-n-p "Download data to ~a?" *data-dir*))
+	  (progn (ensure-directories-exist *data-dir*)
+		 (ensure-directories-exist (merge-pathnames "constraint-profiles/" *data-dir*))
+		 (ensure-directories-exist (merge-pathnames "layouts/" *data-dir*))
+		 (download "https://github.com/semilin/layoup/raw/main/data/corpora.out"
+			   "corpora.out"
+			   t)
+		 (download "https://github.com/semilin/layoup/raw/main/data/defaults.out"
+			   "defaults.out"
+			   t)
+		 (download "https://github.com/semilin/layoup/raw/main/data/functions.lisp"
+			   "functions.lisp")
+		 (download "https://github.com/semilin/layoup/raw/main/data/metric-list.lisp"
+			   "metric-list.lisp")
+		 (download "https://github.com/semilin/layoup/raw/main/data/constraint-profiles/default.lisp"
+			   "constraint-profiles/default.lisp")
+		 (download "https://github.com/semilin/layoup/raw/main/data/layouts/qwerty.lisp"
+			   "layouts/qwerty.lisp"))
+	  (graceful-quit)))
   (load-metrics)
   (load-layouts)
   (load-corpora)

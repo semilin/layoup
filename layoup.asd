@@ -41,7 +41,9 @@
 	       "with-user-abort"
 	       "str"
 	       "cl-ansi-text"
-	       "linedit")
+	       "linedit"
+	       "trivial-features"
+	       "trivial-download")
   :build-operation "program-op"
   :build-pathname "layoup"
   :entry-point "layoup/cli:main"
