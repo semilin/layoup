@@ -68,22 +68,23 @@
   (mapcar (lambda (pos) (pos-to-key pos k)) ngraph))
 
 (defun* (analyze-keys -> hash-table)
-    ((corpus corpus) (k array) (metric-results metric-result-list))
-  (declare (optimize (speed 3) (safety 3)))
-  (let* ((table (metric-result-list-table metric-results))
-	 (results (make-hash-table :size (hash-table-size table))))
-    (loop for metric being the hash-keys of table
-	    using (hash-value values) do
-	      (let ((corpus-ngrams (ecase (metric-ngram metric)
-				     (:bigram (corpus-bigrams corpus))
-				     (:skipgram (corpus-skipgrams corpus))
-				     (:trigram (corpus-trigrams corpus)))))
-		(loop for value in values
-		      do (let ((frequency (gethash (ngraph-to-ngram (metric-result-positions value) k) corpus-ngrams 0))
-			       (metric-amount (metric-result-result value)))
-			   (declare (type fixnum frequency))
-			   (incf (the single-float (gethash metric results 0.0)) (the single-float (* metric-amount frequency)))))))
-    results))
+	((corpus corpus) (k array) (metric-results metric-result-list))
+	(declare (optimize (speed 3) (safety 3)))
+	(let* ((table (metric-result-list-table metric-results))
+	       (results (make-hash-table :size (hash-table-size table))))
+	  (loop for metric being the hash-keys of table
+		using (hash-value values) do
+		(let ((corpus-ngrams (ecase (metric-ngram metric)
+					    (:bigram (corpus-bigrams corpus))
+					    (:skipgram (corpus-skipgrams corpus))
+					    (:trigram (corpus-trigrams corpus)))))
+		  (loop for value in values
+			do (let ((frequency (gethash (ngraph-to-ngram (metric-result-positions value) k) corpus-ngrams 0))
+				 (metric-amount (metric-result-result value)))
+			     (declare (type fixnum frequency))
+			     (incf (the single-float (gethash metric results 0.0))
+				   (the single-float (* metric-amount frequency)))))))
+	  results))
 
 (defun* (layout-metric-ngrams -> list)
     ((corpus corpus) (k array) (metric-results metric-result-list) (metric metric))

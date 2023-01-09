@@ -3,6 +3,7 @@
 (defstruct layout
   (name "" :type string)
   matrix
+  shift-matrix
   keyboard)
 
 (defun* (key-matrix -> (simple-array character *))
@@ -29,7 +30,7 @@ CORPUS. Used for calculating metric percentages."
   (let ((total 0))
     (loop for y below (array-dimension keys 0) do
       (loop for x below (array-dimension keys 1) do
-	(incf total (gethash (aref keys y x) (corpus-chars corpus)))))
+	(incf total (gethash (aref keys y x) (corpus-chars corpus) 0))))
     total))
 
 (defun swap-keys (a b keys)
