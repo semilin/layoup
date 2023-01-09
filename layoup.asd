@@ -43,10 +43,12 @@
 	       "cl-ansi-text"
 	       "linedit"
 	       "trivial-features"
-	       "trivial-download")
+	       "trivial-download"
+	       "dexador"
+	       "yason")
   :build-operation "program-op"
   :build-pathname "layoup"
-  :entry-point "layoup/cli:main"
+  :entry-point "layoup/cli:cli-main"
   :components ((:module "cli-src"
 		:components
 		((:file "main")
@@ -54,5 +56,17 @@
 		 (:file "analyze")
 		 (:file "generate")
 		 (:file "layouts")
+		 (:file "dof")
 		 (:file "commands"))))
   :description "CLI for layoup")
+
+(asdf:defsystem "layoup/discord"
+		:version "0.1.0"
+		:author "semi"
+		:depends-on ("layoup"
+			     "layoup/cli"
+			     "lispcord")
+		:components ((:module "discord-src"
+				      :components
+				      ((:file "main"))))
+		:description "Layoup discord bot")
