@@ -18,4 +18,6 @@
 	      :linedit
 	      :defstar
 	      :trivial-features
-	      :trivial-download))
+	      :trivial-download
+	      :dexador
+	      :yason))
