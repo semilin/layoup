@@ -1,0 +1,3 @@
+
+(MAKE-LAYOUT :NAME "cerilious_v5.1" :MATRIX (APPLY #'KEY-MATRIX 'NIL)
+             :SHIFT-MATRIX NIL :KEYBOARD NIL)

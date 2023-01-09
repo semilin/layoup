@@ -1,0 +1,3 @@
+
+(MAKE-LAYOUT :NAME "really_f'ed" :MATRIX (APPLY #'KEY-MATRIX 'NIL)
+             :SHIFT-MATRIX NIL :KEYBOARD NIL)

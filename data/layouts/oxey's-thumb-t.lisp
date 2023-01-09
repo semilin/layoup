@@ -1,0 +1,3 @@
+
+(MAKE-LAYOUT :NAME "oxey's-thumb-t" :MATRIX (APPLY #'KEY-MATRIX 'NIL)
+             :SHIFT-MATRIX NIL :KEYBOARD NIL)

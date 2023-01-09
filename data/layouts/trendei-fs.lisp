@@ -1,0 +1,3 @@
+
+(MAKE-LAYOUT :NAME "trendei-fs" :MATRIX (APPLY #'KEY-MATRIX 'NIL) :SHIFT-MATRIX
+             NIL :KEYBOARD NIL)
