@@ -109,12 +109,17 @@
 		 :arguments (list (make-argument :name "corpus"
 						 :type :corpus))
 		 :function #'default-corpus)
-   (make-command :name "import-genkey"
+   (make-command :name "genkey-sync"
 		 :aliases ()
 		 :description "Imports your genkey layouts directory into layoup."
 		 :arguments (list (make-argument :name "directory"
 						 :type :path))
 		 :function #'convert-genkey)
+   (make-command :name "dof-sync"
+		 :aliases ()
+		 :description "Synchronizes your local layouts with DOF."
+		 :arguments ()
+		 :function #'dof-sync)
    (make-command :name "help"
 		 :aliases '("hwat" "?")
 		 :description "Prints a help message and list of commands."

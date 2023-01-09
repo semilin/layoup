@@ -1,6 +1,6 @@
 (defpackage layoup/cli
-  (:use :cl :layoup :arrows :cl-ansi-text)
-  (:export :main)) 
+	    (:use :cl :layoup :arrows :cl-ansi-text)
+	    (:export :cli-main)) 
 (in-package :layoup/cli)
 
 (defstruct defaults
@@ -26,12 +26,13 @@
 	do (with-open-file (in f)
 	     (with-standard-io-syntax
 	       (let ((l (eval (read in))))
-		 (setf (gethash (->> l
-				     layout-name
-				     string-downcase
-				     (substitute #\- #\SPACE))
-				*layouts*)
-		       l))))))
+		 (if (not (equal '(0 0) (array-dimensions (layout-matrix l))))
+		     (setf (gethash (->> l
+					 layout-name
+					 string-downcase
+					 (substitute #\- #\SPACE))
+				    *layouts*)
+			   l)))))))
 
 (defun get-metric (s)
   (declare (type string s))
@@ -240,7 +241,26 @@
     (trivial-download:download from full-to)
     (format t "~%")))
 
-(defun main ()
+(defun download-data ()
+  (ensure-directories-exist *data-dir*)
+  (ensure-directories-exist (merge-pathnames "constraint-profiles/" *data-dir*))
+  (ensure-directories-exist (merge-pathnames "layouts/" *data-dir*))
+  (download "https://github.com/semilin/layoup/raw/main/data/corpora.out"
+	    "corpora.out"
+	    t)
+  (download "https://github.com/semilin/layoup/raw/main/data/defaults.out"
+	    "defaults.out"
+	    t)
+  (download "https://github.com/semilin/layoup/raw/main/data/functions.lisp"
+	    "functions.lisp")
+  (download "https://github.com/semilin/layoup/raw/main/data/metric-list.lisp"
+	    "metric-list.lisp")
+  (download "https://github.com/semilin/layoup/raw/main/data/constraint-profiles/default.lisp"
+	    "constraint-profiles/default.lisp")
+  (download "https://github.com/semilin/layoup/raw/main/data/layouts/qwerty.lisp"
+	    "layouts/qwerty.lisp"))
+
+(defun load-data ()
   (setf *data-dir*
 	(if (probe-file (merge-pathnames "data/" (uiop:getcwd)))
 	    (merge-pathnames "data/" (uiop:getcwd))
@@ -250,35 +270,22 @@
   (if (not (probe-file *data-dir*))
       (if (progn (format t "layoup's data directory does not exist.~%")
 		 (y-or-n-p "Download data to ~a?" *data-dir*))
-	  (progn (ensure-directories-exist *data-dir*)
-		 (ensure-directories-exist (merge-pathnames "constraint-profiles/" *data-dir*))
-		 (ensure-directories-exist (merge-pathnames "layouts/" *data-dir*))
-		 (download "https://github.com/semilin/layoup/raw/main/data/corpora.out"
-			   "corpora.out"
-			   t)
-		 (download "https://github.com/semilin/layoup/raw/main/data/defaults.out"
-			   "defaults.out"
-			   t)
-		 (download "https://github.com/semilin/layoup/raw/main/data/functions.lisp"
-			   "functions.lisp")
-		 (download "https://github.com/semilin/layoup/raw/main/data/metric-list.lisp"
-			   "metric-list.lisp")
-		 (download "https://github.com/semilin/layoup/raw/main/data/constraint-profiles/default.lisp"
-			   "constraint-profiles/default.lisp")
-		 (download "https://github.com/semilin/layoup/raw/main/data/layouts/qwerty.lisp"
-			   "layouts/qwerty.lisp"))
+	  (download-data)
 	  (graceful-quit)))
+  
   (load-metrics)
   (load-layouts)
   (load-corpora)
   (load-defaults)
-  (load-profiles)
+  (load-profiles))
 
+(defun cli-main ()
+  (load-data)
   (setf *random-state* (make-random-state t))
 
   #+sb-ext (sb-ext:disable-debugger)
   (exit-on-ctrl-c
-    (loop do (progn
-	       (let ((args (str:words (linedit:linedit :prompt "-> "))))
-		 (if args (handler-case (get-command args)
-			    (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
+   (loop do (progn
+	      (let ((args (str:words (linedit:linedit :prompt "-> "))))
+		(if args (handler-case (get-command args)
+			   (user-error (e) (format t "~a: ~a~%" (red "error") e)))))))))
