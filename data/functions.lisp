@@ -107,32 +107,38 @@
       (horizontal-distance a b)
       nil))
 
+(defmacro finger-sfb (finger-fn)
+  `(and (,finger-fn a)
+	(same-finger a b)))
+
+(defmacro finger-distance (sfb-fn)
+  `(if (,sfb-fn a b)
+       (distance a b)
+       nil))
+
 (defun pinky-sfb? (a b)
-  (and (pinky? a)
-       (same-finger a b)))
+  (finger-sfb pinky?))
 
 (defun ring-sfb? (a b)
-  (and (ring? a)
-       (same-finger a b)))
+  (finger-sfb ring?))
 
 (defun middle-sfb? (a b)
-  (and (middle? a)
-       (same-finger a b)))
+  (finger-sfb middle?))
+
+(defun index-sfb? (a b)
+  (finger-sfb index?))
 
 (defun pinky-sfb-distance (a b)
-  (if (pinky-sfb? a b)
-      (distance a b)
-      nil))
+  (finger-distance pinky-sfb?))
 
 (defun ring-sfb-distance (a b)
-  (if (ring-sfb? a b)
-      (distance a b)
-      nil))
+  (finger-distance ring-sfb?))
 
 (defun middle-sfb-distance (a b)
-  (if (middle-sfb? a b)
-      (distance a b)
-      nil))
+  (finger-distance middle-sfb?))
+
+(defun index-sfb-distance (a b)
+  (finger-distance index-sfb?))
 
 (defun pinky-sfr? (a b)
   (and (sfr? a b)
